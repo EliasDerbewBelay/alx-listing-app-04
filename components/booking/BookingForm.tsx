@@ -1,9 +1,40 @@
+import axios from "axios";
+import { useState } from "react";
+
 const BookingForm = () => {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    cardNumber: "",
+    expirationDate: "",
+    cvv: "",
+    billingAddress: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.post("/api/bookings", formData);
+      alert("Booking confirmed");
+    } catch (error) {
+      setError("Failed to submit booking");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="bg-white p-6 shadow-md rounded-lg">
       <h2 className="text-xl font-semibold">Contact Detail</h2>
       {/* Contact Information */}
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label>First Name</label>
@@ -72,9 +103,12 @@ const BookingForm = () => {
         </div>
 
         {/* Submit Button */}
-        <button className="mt-6 bg-green-500 text-wite py-2 px-4 rounded-md w-full">
-          {" "}
-          Confirm & Pay
+        <button
+          type="submit"
+          disabled={loading}
+          className="mt-6 bg-green-500 text-wite py-2 px-4 rounded-md w-full"
+        >
+          {loading ? "Processing ..." : "Confirm & Pay"}
         </button>
       </form>
     </div>
